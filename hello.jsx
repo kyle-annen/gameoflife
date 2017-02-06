@@ -20,19 +20,12 @@ class RecipeBox extends React.Component {
 		super(props);
 		this.state = {
 			modal: false,
-			recipes: [
-				{
-					title: "Ruben",
-					ingredients: ["Rye Bread", "Corned Beef", "Thousand Island", "Swiss Cheese"],
-				},
-				{
-					title: "Monte Cristo",
-					ingredients: ["Rye Bread", "Corned Beef", "Thousand Island", "Swiss Cheese"],
-				}
-			],
+			recipes: [],
 		};
-	this.open = this.open.bind(this);
-	this.close = this.close.bind(this);
+		this.open = this.open.bind(this);
+		this.close = this.close.bind(this);
+		this.submit = this.submit.bind(this);
+		this.remove = this.remove.bind(this);
 	}
 
 	open() {
@@ -47,14 +40,74 @@ class RecipeBox extends React.Component {
 		})
 	}
 
+	submit() {
+		var newTitle = document.getElementById('recipeTitle').value;
+		var newIngredients = document.getElementById('recipeIngredients').value.trim().split(', ');
+		var oldList = this.state.recipes;
+		var newEntry = {
+			title: newTitle,
+			ingredients: newIngredients
+		};
+
+		oldList.push(newEntry);
+
+		this.setState({
+			modal: false,
+			recipes: oldList
+		})
+	}
+
+	remove(value) {
+		var oldList = this.state.recipes;
+		var newList = [];
+
+		for (var i = 0; i < oldList.length; i++ ) {
+			if (oldList[i].title != value) {
+				newList.push(oldList[i]);
+			}
+		}
+
+		this.setState({
+			recipes: newList
+		});
+	}
+
+
+	componentDidUpdate() {
+		localStorage.setItem( 'state', JSON.stringify(this.state));
+	}
+
+	componentWillMount() {
+		const recipeStorage = JSON.parse(localStorage.getItem('state'));
+		if (recipeStorage != null) {
+			this.setState(recipeStorage);
+			console.log(recipeStorage);		
+
+		} else {
+			this.setState({
+				modal: false,
+				recipes: [
+					{
+						title: "Ruben",
+						ingredients: ["Rye Bread", "Corned Beef", "Thousand Island", "Swiss Cheese"],
+					},
+					{
+						title: "Monte Cristo",
+						ingredients: ["Rye Bread", "Corned Beef", "Thousand Island", "Swiss Cheese"],
+					}
+				]
+			})
+		}
+	}
+
 
 	render() {
 		return (
 			<div className="container">
 				<h1>Recipe Box</h1>
-				<div className="jumbotron">
+				<div className="jumbotron">	
 					{this.state.recipes.map((recipe) =>
-							<Recipe recipe={recipe} />
+							<Recipe recipe={recipe} key={recipe.title} remove={this.remove}/>
 						)}
 				</div>
 
@@ -70,7 +123,7 @@ class RecipeBox extends React.Component {
           	<RecipeForm />
           </ModalBody>
           <ModalFooter>
-            <Button color="primary" onClick={this.close}>Save Recipe</Button>
+            <Button color="primary" onClick={this.submit}>Save Recipe</Button>
             <Button color="secondary" onClick={this.close}>Cancel</Button>
           </ModalFooter>
         </Modal>
@@ -106,7 +159,9 @@ class Recipe extends React.Component {
 					<Collapse isOpen={this.state.collapse}>
 						<h5>Ingredients</h5>
 						<Button
-							color="danger">
+							color="danger"
+							
+							>
 							Delete Recipe
 						</Button>
 						<p/>
