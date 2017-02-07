@@ -57,17 +57,18 @@ class RecipeBox extends React.Component {
 		})
 	}
 
-	remove(value) {
+	remove(idx, e) {
 		var oldList = this.state.recipes;
 		var newList = [];
 
 		for (var i = 0; i < oldList.length; i++ ) {
-			if (oldList[i].title != value) {
+			if (i !== idx) {
 				newList.push(oldList[i]);
 			}
 		}
 
 		this.setState({
+			modal: false,
 			recipes: newList
 		});
 	}
@@ -106,8 +107,8 @@ class RecipeBox extends React.Component {
 			<div className="container">
 				<h1>Recipe Box</h1>
 				<div className="jumbotron">	
-					{this.state.recipes.map((recipe) =>
-							<Recipe recipe={recipe} key={recipe.title} remove={this.remove}/>
+					{this.state.recipes.map((recipe, i) =>
+							<Recipe recipe={recipe} key={i} index={i} remove={this.remove}/>
 						)}
 				</div>
 
@@ -160,13 +161,13 @@ class Recipe extends React.Component {
 						<h5>Ingredients</h5>
 						<Button
 							color="danger"
-							
+							onClick={this.props.remove.bind(this, this.props.index)}
 							>
 							Delete Recipe
 						</Button>
 						<p/>
-						{this.props.recipe.ingredients.map((ingredient) =>
-							<ListGroupItem>{ingredient}</ListGroupItem>
+						{this.props.recipe.ingredients.map((ingredient, k) =>
+							<ListGroupItem key={k} >{ingredient}</ListGroupItem>
 						)}
 					</Collapse>
 				
