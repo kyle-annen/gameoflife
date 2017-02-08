@@ -1,1 +1,1 @@
-import Hello from './hello.jsx';
+import GameOfLife from './gameoflife.jsx';
