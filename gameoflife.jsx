@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 class GameOfLife extends React.Component {
 	constructor(props) {
 		super(props);
+		//loop to populate game board
 		var temp_board = [];
 		for (var i=0; i < 20; i++) {
 			var temp_row = [];
@@ -12,6 +13,7 @@ class GameOfLife extends React.Component {
 			}
 			temp_board.push(temp_row);
 		}
+		//set start board as string to keep from linked arrays, has to be better way
 		var start_board = JSON.stringify(temp_board);
 		this.state = {
 			width: 20,
@@ -20,11 +22,13 @@ class GameOfLife extends React.Component {
 			start_board: start_board,
 			run: false
 		};
+		//this declarations, need to research why this is nessesary
 		this.handleCellClick = this.handleCellClick.bind(this);
 		this.clearBoard = this.clearBoard.bind(this);
 		this.startGame = this.startGame.bind(this);
 	}
 
+	//when cell clicked, change cooresponding value in board array to 1
 	handleCellClick(cid) {
 		const values = cid.split("-");
 		const yval = parseInt(values[1]);
@@ -42,6 +46,7 @@ class GameOfLife extends React.Component {
 		})
 	}
 
+	//sets all values in board array to 0
 	clearBoard() {
 		this.setState({
 			board: JSON.parse(this.state.start_board),
@@ -49,6 +54,7 @@ class GameOfLife extends React.Component {
 		})
 	}
 
+	//value to set state to running
 	startGame() {
 		this.setState({
 			run: true
