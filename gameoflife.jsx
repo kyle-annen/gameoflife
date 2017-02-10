@@ -26,24 +26,27 @@ class GameOfLife extends React.Component {
 		this.handleCellClick = this.handleCellClick.bind(this);
 		this.clearBoard = this.clearBoard.bind(this);
 		this.startGame = this.startGame.bind(this);
+		this.stopGame = this.stopGame.bind(this);
 	}
 
 	//when cell clicked, change cooresponding value in board array to 1
 	handleCellClick(cid) {
-		const values = cid.split("-");
-		const yval = parseInt(values[1]);
-		const xval = parseInt(values[2]);
-		var cboard = this.state.board;
+		if (this.state.run == false) {
+			const values = cid.split("-");
+			const yval = parseInt(values[1]);
+			const xval = parseInt(values[2]);
+			var cboard = this.state.board;
 
-		if (cboard[yval][xval] == 0) {
-			cboard[yval][xval] = 1
-		} else {
-			cboard[yval][xval] = 0
+			if (cboard[yval][xval] == 0) {
+				cboard[yval][xval] = 1
+			} else {
+				cboard[yval][xval] = 0
+			}
+
+			this.setState({
+				board: cboard
+			})
 		}
-
-		this.setState({
-			board: cboard
-		})
 	}
 
 	//sets all values in board array to 0
@@ -61,6 +64,12 @@ class GameOfLife extends React.Component {
 		})
 	}
 
+	stopGame() {
+		this.setState({
+			run: false
+		})
+	}
+
 
 
 	render() {
@@ -69,7 +78,9 @@ class GameOfLife extends React.Component {
 				<GameBoard 
 				board={this.state.board} 
 				handleCellClick={this.handleCellClick}
-				clearBoard={this.clearBoard}/>
+				clearBoard={this.clearBoard}
+				startGame={this.startGame}
+				stopGame={this.stopGame}/>
 			</div>
 		)
 	}
@@ -84,10 +95,14 @@ class GameBoard extends React.Component {
 					<button 
 						type="button" 
 						className="btn btn-primary"
-						>
+						onClick={this.props.startGame}>
 						Start
 					</button>
-					<button className="btn btn-warning">Stop</button>
+					<button 
+						className="btn btn-warning"
+						onClick={this.props.stopGame}>
+						Stop
+					</button>
 					<button 
 						className="btn btn-danger"
 						onClick={this.props.clearBoard}>
