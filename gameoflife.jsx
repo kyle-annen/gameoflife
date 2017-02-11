@@ -27,6 +27,8 @@ class GameOfLife extends React.Component {
 		this.clearBoard = this.clearBoard.bind(this);
 		this.startGame = this.startGame.bind(this);
 		this.stopGame = this.stopGame.bind(this);
+		this.gameLoop = this.gameLoop.bind(this);
+		this.randomizeBoard = this.randomizeBoard.bind(this);
 	}
 
 	//when cell clicked, change cooresponding value in board array to 1
@@ -70,6 +72,126 @@ class GameOfLife extends React.Component {
 		})
 	}
 
+	gameLoop() {
+		if (this.state.run) {
+			console.log("Starting Game Loop")
+			//define shorthand for board in state
+			const iboard = this.state.board;
+			//define a copy of the game board
+			var gb = JSON.parse(JSON.stringify(iboard));
+			//loop through each row
+			for (var y=0; y < 20; y++) {
+				//loop through each cell
+				for (var x=0; x < 20; x++) {
+
+					//define an array to push neighbor cell values (N,S,E,W)
+					var n = [];
+					//define a variable for the count of neighbors that are alive
+					var ncount = 0;
+
+					//push the value of all neighbor cells to the array
+					if (y > 0 && x > 0 && x < 19 && y < 19) {
+						iboard[y-1][x] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y-1][x+1] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y][x+1] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y+1][x+1] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y+1][x] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y+1][x-1] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y][x-1] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y-1][x-1] == 1 ? ncount += 1 : ncount +=0;
+					} else if (y == 0 && x == 0) {
+						iboard[y][x+1] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y+1][x+1] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y+1][x] == 1 ? ncount += 1 : ncount +=0;
+					} else if (y == 0 && x == 19) {
+						iboard[y+1][x] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y+1][x-1] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y][x-1] == 1 ? ncount += 1 : ncount +=0;
+					} else if (y == 19 && x == 19) {
+						iboard[y-1][x] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y][x-1] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y-1][x-1] == 1 ? ncount += 1 : ncount +=0;
+					} else if (y == 19 && x == 0) {
+						iboard[y-1][x] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y-1][x+1] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y][x+1] == 1 ? ncount += 1 : ncount +=0;
+					} else if (y == 0) {
+						iboard[y][x+1] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y+1][x+1] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y+1][x] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y+1][x-1] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y][x-1] == 1 ? ncount += 1 : ncount +=0;
+					} else if ( y == 19) {
+						iboard[y-1][x] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y-1][x+1] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y][x+1] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y][x-1] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y-1][x-1] == 1 ? ncount += 1 : ncount +=0;
+					} else if (x == 0) {
+						iboard[y-1][x] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y-1][x+1] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y][x+1] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y+1][x+1] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y+1][x] == 1 ? ncount += 1 : ncount +=0;
+					} else if (x == 19) {
+						iboard[y-1][x] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y+1][x] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y+1][x-1] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y][x-1] == 1 ? ncount += 1 : ncount +=0;
+						iboard[y-1][x-1] == 1 ? ncount += 1 : ncount +=0;
+					}
+
+					
+
+					//loop with for game rules
+
+					//if alive 
+					if (iboard[y][x] === 1) {
+						//if fewer than or equal to 2 neighbors, cell dies
+						if (ncount < 2) {
+							gb[y][x] = 0;
+							//if 2-3 nieghbors, survives
+						} else if (ncount > 1 && ncount < 4) {
+							gb[y][x] = 1;
+							//if there are 4 neighbors, cell dies
+						} else {
+							gb[y][x] = 0;
+						}
+					}
+					//if cell is alive and has 3 neighbors, cell is alive by reproduction
+					if(iboard[y][x] === 0 && ncount === 3) {
+						gb[y][x] = 1;
+					}
+				}
+			}
+			console.log("finish conditionals");
+			this.setState({
+				board: gb
+			})
+			console.log("finish setstate in Game Loop");
+		}
+	}
+
+	randomizeBoard() {
+		if (!this.state.run) {
+			var randBoard = [];
+			for (var y=0; y < 20; y++) {
+				var brow = [];
+				for (var x=0; x < 20; x++) {
+					brow.push(Math.floor(Math.random() * 2));
+				}
+				randBoard.push(brow);
+			}
+			this.setState({
+				board: randBoard
+			})
+		}
+	}
+
+	componentDidMount() {
+		this.randomizeBoard();
+		setInterval(this.gameLoop, 300);
+	}
 
 
 	render() {
@@ -80,7 +202,8 @@ class GameOfLife extends React.Component {
 				handleCellClick={this.handleCellClick}
 				clearBoard={this.clearBoard}
 				startGame={this.startGame}
-				stopGame={this.stopGame}/>
+				stopGame={this.stopGame}
+				randomizeBoard={this.randomizeBoard}/>
 			</div>
 		)
 	}
@@ -107,6 +230,11 @@ class GameBoard extends React.Component {
 						className="btn btn-danger"
 						onClick={this.props.clearBoard}>
 						Clear Board
+					</button>
+					<button
+						className="btn btn-secondary"
+						onClick={this.props.randomizeBoard}>
+						Randomize Board
 					</button>
 				</div>
 				<br/><br/>
