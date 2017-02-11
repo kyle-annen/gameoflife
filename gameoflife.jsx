@@ -20,7 +20,8 @@ class GameOfLife extends React.Component {
 			height: 20,
 			board: temp_board,
 			start_board: start_board,
-			run: false
+			run: false,
+			generations: 0
 		};
 		//this declarations, need to research why this is nessesary
 		this.handleCellClick = this.handleCellClick.bind(this);
@@ -55,7 +56,8 @@ class GameOfLife extends React.Component {
 	clearBoard() {
 		this.setState({
 			board: JSON.parse(this.state.start_board),
-			run: false
+			run: false,
+			generations: 0
 		})
 	}
 
@@ -166,7 +168,8 @@ class GameOfLife extends React.Component {
 			}
 			console.log("finish conditionals");
 			this.setState({
-				board: gb
+				board: gb, 
+				generations: this.state.generations + 1
 			})
 			console.log("finish setstate in Game Loop");
 		}
@@ -183,7 +186,8 @@ class GameOfLife extends React.Component {
 				randBoard.push(brow);
 			}
 			this.setState({
-				board: randBoard
+				board: randBoard,
+				generations: 0
 			})
 		}
 	}
@@ -203,7 +207,8 @@ class GameOfLife extends React.Component {
 				clearBoard={this.clearBoard}
 				startGame={this.startGame}
 				stopGame={this.stopGame}
-				randomizeBoard={this.randomizeBoard}/>
+				randomizeBoard={this.randomizeBoard}
+				generations={this.state.generations}/>
 			</div>
 		)
 	}
@@ -235,6 +240,10 @@ class GameBoard extends React.Component {
 						className="btn btn-secondary"
 						onClick={this.props.randomizeBoard}>
 						Randomize Board
+					</button>
+					<button
+						className="btn btn-secondary" disabled>
+						{"Generation: " + this.props.generations.toString()}
 					</button>
 				</div>
 				<br/><br/>
